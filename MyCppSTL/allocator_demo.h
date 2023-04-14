@@ -85,7 +85,7 @@ namespace DemoSTL
             return (const_pointer)& x;
         }
 
-        size_type max_size() const
+        [[nodiscard]] size_type max_size() const
         {
             return size_type(INT_MAX / sizeof(T));
         }
