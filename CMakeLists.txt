@@ -6,4 +6,4 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(.)
 
 add_executable(MyCppSTL
-        main.cpp MyCppSTL/allocator_demo.h)
+        main.cpp MyCppSTL/allocator_demo.h test_demo.cpp)
