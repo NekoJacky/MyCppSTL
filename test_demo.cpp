@@ -2,7 +2,8 @@
 // Created by Apple Inc on 2023/4/14.
 //
 
-#include "MyCppSTL/allocator_demo.h"
+#include "MySTL/allocator_demo.h"
+#include "MySTL/memory_demo.h"
 
 struct test
 {

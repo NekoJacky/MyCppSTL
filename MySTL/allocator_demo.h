@@ -8,6 +8,7 @@
 #include <iostream>
 #include <cstddef>
 #include <new>
+#include <limits.h>
 
 namespace DemoSTL
 {
@@ -87,7 +88,7 @@ namespace DemoSTL
 
         [[nodiscard]] size_type max_size() const
         {
-            return size_type(INT_MAX / sizeof(T));
+            return size_type(UINT_MAX / sizeof(T));
         }
     };
 

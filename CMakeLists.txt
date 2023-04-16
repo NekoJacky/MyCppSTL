@@ -5,5 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
 
-add_executable(MyCppSTL
-        main.cpp MyCppSTL/allocator_demo.h test_demo.cpp)
+aux_source_directory(. SRCS)
+
+add_subdirectory(MySTL)
+
+add_executable(MyCppSTL ${SRCS})
+
+target_link_libraries(MyCppSTL MySTL)
