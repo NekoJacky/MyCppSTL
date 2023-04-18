@@ -8,7 +8,7 @@
 #include <iostream>
 #include <cstddef>
 #include <new>
-#include <limits.h>
+#include <climits>
 
 namespace DemoSTL
 {
