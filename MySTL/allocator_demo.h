@@ -12,6 +12,8 @@
 
 namespace DemoSTL
 {
+    // 一个简单的空间配置器，包装了new和delete，不建议使用
+
     template<class T>
     inline T* _allocate(ptrdiff_t size, T*)
     {
@@ -55,6 +57,7 @@ namespace DemoSTL
         typedef size_t      size_type;
         typedef ptrdiff_t   difference_type;
 
+        // rebind机制用来通过一个已经特化的模板类型得到其它的特化类型
         template<class U>
         struct rebind
         {
