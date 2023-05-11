@@ -1,5 +1,5 @@
 //
-// Created by Apple Inc on 2023/4/18.
+// Created by Jacky on 2023/4/18.
 //
 
 #ifndef MYCPPSTL_CONSTRUCT_DEMO_H
@@ -15,8 +15,7 @@ namespace DemoSTL
     inline void construct(T1* p, T2& value)
     {
         new (p) T1(value);
-    }
-    // 使用了placement new
+    }   // 使用了placement new
 
     template<class T>
     inline void construct(T* p)
@@ -31,7 +30,7 @@ namespace DemoSTL
     }
 
     template<class ForwardIterator>
-    inline void destory(ForwardIterator First, ForwardIterator Last)
+    inline void destroy(ForwardIterator First, ForwardIterator Last)
     {
         _destroy(First, Last, value_type(First));
     }
@@ -58,6 +57,10 @@ namespace DemoSTL
     // 有 trivial destructor，即使用默认的析构函数，则什么都不需要做。
     template<class ForwardIterator>
     inline void _destroy_aux(ForwardIterator First, ForwardIterator Last, std::true_type) {}
+
+    // 特化
+    inline void destroy(char*, char*) {};
+    inline void destroy(wchar_t*, wchar_t*) {};
 }
 
 

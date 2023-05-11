@@ -17,7 +17,11 @@ namespace DemoSTL
     template<class T>
     inline T* _allocate(ptrdiff_t size, T*)
     {
-        std::set_new_handler(nullptr);      // 保证分配失败（内存不足）时会抛出异常
+        std::set_new_handler(nullptr);
+        // 当内存不够申请空间失败时，默认抛出std::bad_alloc异常。当使用set_new_handler(new_handler)时，
+        // 程序会转向new_handler指向的（我们自己写的）内存处理程序。
+        // 当handler为nullptr时，强制令C++认为我们没有自定义的异常处理程序，
+        // 即强制C++抛出std::bad_alloc异常。
         T* tmp = (T*)(::operator new((size_t)(size * sizeof(T))));
         if(!tmp)
         {
