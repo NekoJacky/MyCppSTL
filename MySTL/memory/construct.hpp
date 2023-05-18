@@ -2,8 +2,8 @@
 // Created by Jacky on 2023/4/18.
 //
 
-#ifndef MYCPPSTL_CONSTRUCT_DEMO_H
-#define MYCPPSTL_CONSTRUCT_DEMO_H
+#ifndef MYCPPSTL_CONSTRUCT_HPP
+#define MYCPPSTL_CONSTRUCT_HPP
 
 #include <new>
 #include <type_traits>
@@ -64,4 +64,4 @@ namespace DemoSTL
 }
 
 
-#endif //MYCPPSTL_CONSTRUCT_DEMO_H
+#endif //MYCPPSTL_CONSTRUCT_HPP

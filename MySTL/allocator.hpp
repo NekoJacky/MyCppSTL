@@ -2,8 +2,8 @@
 // Created by Jacky on 2023/4/11.
 //
 
-#ifndef MYCPPSTL_ALLOCATOR_DEMO_H
-#define MYCPPSTL_ALLOCATOR_DEMO_H
+#ifndef MYCPPSTL_ALLOCATOR_HPP
+#define MYCPPSTL_ALLOCATOR_HPP
 
 #include <iostream>
 #include <cstddef>
@@ -50,7 +50,7 @@ namespace DemoSTL
     }
 
     template<class T>
-    class allocator_demo
+    class allocator
     {
     public:
         typedef T           type_value;
@@ -65,7 +65,7 @@ namespace DemoSTL
         template<class U>
         struct rebind
         {
-            typedef allocator_demo<U> other;
+            typedef allocator<U> other;
         };
 
         pointer allocate(size_type n, const void* hint= nullptr)
@@ -101,4 +101,4 @@ namespace DemoSTL
 
 } // DemoSTL
 
-#endif //MYCPPSTL_ALLOCATOR_DEMO_H
+#endif //MYCPPSTL_ALLOCATOR_HPP
