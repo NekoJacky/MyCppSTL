@@ -2,22 +2,20 @@
 // Created by Jacky on 2023/4/16.
 //
 
-#ifndef MYCPPSTL_MEMORY_DEMO_H
-#define MYCPPSTL_MEMORY_DEMO_H
+#ifndef MYCPPSTL_MEMORY_HPP
+#define MYCPPSTL_MEMORY_HPP
 
-#include "memory/construct_demo.h"
-#include "memory/alloc_demo.h"
+#include "memory/construct.hpp"
+#include "memory/alloc.hpp"
 
 
-// TO DO：写完alloc以后恢复为非注释
-/*
 #ifdef __USE_MALLOC__
-typedef __malloc_alloc_template<0> malloc_alloc;
 typedef malloc_alloc alloc;
 #else
-typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;
+#define NODE_ALLOCATOR_THREADS
+typedef DemoSTL::default_alloc_template<false, 0> alloc;
 #endif
-*/
+
 
 /*
  * memory中包含：
@@ -26,11 +24,12 @@ typedef __default_alloc_template<__NODE_ALLOCATOR_THREADS, 0> alloc;
  *      uninitialized：  包含一些全局函数，用来填充或复制大块的内存数据
  */
 
-/*
+
 namespace DemoSTL
 {
 
-    // simple_alloc是一个包装，使配置器拥有符合STL规范的接口
+    // simple_alloc是一个配置器接口的包装
+    // 使配置器拥有符合STL规范的接口
     template<class T, class alloc=alloc>
     class simple_alloc
     {
@@ -59,6 +58,5 @@ namespace DemoSTL
         }
     };
 }
-*/
 
-#endif //MYCPPSTL_MEMORY_DEMO_H
+#endif //MYCPPSTL_MEMORY_HPP
