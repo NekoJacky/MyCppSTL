@@ -1,7 +1,3 @@
-aux_source_directory(. SRC)
+file(GLOB SRC "*.hpp" "*.h")
 
-add_subdirectory(memory)
-
-add_library(MySTL ${SRC})
-
-target_link_libraries(MySTL memory)
+include_directories(memory)
