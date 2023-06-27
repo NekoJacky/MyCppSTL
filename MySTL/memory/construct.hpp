@@ -8,14 +8,17 @@
 #include <new>
 #include <type_traits>
 
-//定义了构造与析构的方法construct()与destroy()
+// 定义了构造与析构的方法construct()与destroy()
+// 这两个函数都是全局函数
+
 namespace DemoSTL
 {
+    // 使用了placement new
     template<class T1, class T2>
     inline void construct(T1* p, T2& value)
     {
         new (p) T1(value);
-    }   // 使用了placement new
+    }
 
     template<class T>
     inline void construct(T* p)

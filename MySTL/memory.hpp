@@ -5,8 +5,8 @@
 #ifndef MYCPPSTL_MEMORY_HPP
 #define MYCPPSTL_MEMORY_HPP
 
-#include "memory/construct.hpp"
 #include "memory/alloc.hpp"
+#include "memory/uninitialized.hpp"
 
 
 #ifdef __USE_MALLOC__
