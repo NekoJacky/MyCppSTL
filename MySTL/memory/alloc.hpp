@@ -303,6 +303,8 @@ namespace DemoSTL
         *p_free_list = result->free_list_link;
         return result;
     }
+
+    typedef default_alloc_template<false, 0> default_alloc;
 } // DemoSTL
 
 #endif //MYCPPSTL_ALLOC_HPP

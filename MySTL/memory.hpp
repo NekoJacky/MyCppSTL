@@ -10,10 +10,10 @@
 
 
 #ifdef __USE_MALLOC__
-typedef malloc_alloc alloc;
+typedef DemoSTL::malloc_alloc alloc;
 #else
 #define NODE_ALLOCATOR_THREADS
-typedef DemoSTL::default_alloc_template<false, 0> alloc;
+typedef DemoSTL::default_alloc alloc;
 #endif
 
 
