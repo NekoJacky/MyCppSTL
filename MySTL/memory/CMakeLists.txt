@@ -1,1 +1,1 @@
-file(GLOB MemorySRC "*.hpp" "*.h")
+file(GLOB MemorySRC "*.hpp")

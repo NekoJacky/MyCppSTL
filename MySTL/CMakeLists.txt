@@ -1,3 +1,3 @@
-file(GLOB SRC "*.hpp" "*.h")
+file(GLOB SRC "*.hpp")
 
 include_directories(memory)
