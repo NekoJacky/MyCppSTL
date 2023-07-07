@@ -27,7 +27,6 @@ typedef DemoSTL::default_alloc alloc;
 
 namespace DemoSTL
 {
-
     // simple_alloc是一个配置器接口的包装
     // 使配置器拥有符合STL规范的接口
     template<class T, class alloc=alloc>
