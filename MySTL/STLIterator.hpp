@@ -7,13 +7,15 @@
 
 #include <cstddef>
 
+/* 迭代器基类 */
+
 namespace DemoSTL
 {
-    struct input_iterator_tag {};
-    struct output_iterator_tag {};
-    struct forward_iterator_tag: input_iterator_tag {};
-    struct bidirectional_iterator_tag: forward_iterator_tag {};
-    struct random_access_iterator_tag: bidirectional_iterator_tag{};
+    struct input_iterator_tag {};                                   // 输入迭代器
+    struct output_iterator_tag {};                                  // 输出迭代器
+    struct forward_iterator_tag: input_iterator_tag {};             // 向前迭代器
+    struct bidirectional_iterator_tag: forward_iterator_tag {};     // 双向迭代器
+    struct random_access_iterator_tag: bidirectional_iterator_tag{};// 随机访问迭代器
 
     // 迭代器基类
     template<class Category, class T, class Distance=ptrdiff_t, class Pointer=T*, class Reference=T&>
@@ -75,6 +77,34 @@ namespace DemoSTL
     inline typename iterator_traits<Iterator>::value_type * value_type(const Iterator&)
     {
         return static_cast<typename iterator_traits<Iterator>::value_type *> (0);
+    }
+
+    // distance
+    template<class InputIterator>
+    inline typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
+    {
+        typedef typename iterator_traits<InputIterator>::iterator_category category;
+        return distance_(first, last, category());
+    }
+
+    template<class InputIterator>
+    inline typename iterator_traits<InputIterator>::difference_type
+    distance_(InputIterator first, InputIterator last, input_iterator_tag)
+    {
+        typename iterator_traits<InputIterator>::difference_type n = 0;
+        while(first != last)
+        {
+            first++;
+            n++;
+        }
+        return n;
+    }
+
+    template<class RandomAccessIterator>
+    inline typename iterator_traits<RandomAccessIterator>::difference_type
+    distance_(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
+    {
+        return last-first;
     }
 }
 

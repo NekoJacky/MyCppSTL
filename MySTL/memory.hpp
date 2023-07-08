@@ -7,6 +7,7 @@
 
 #include "memory/alloc.hpp"
 #include "memory/uninitialized.hpp"
+#include "STLIterator.hpp"
 
 
 #ifdef __USE_MALLOC__
