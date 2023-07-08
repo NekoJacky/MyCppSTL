@@ -80,6 +80,7 @@ namespace DemoSTL
     }
 
     // distance
+    // 用于计算两个迭代器之间的距离
     template<class InputIterator>
     inline typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
     {
@@ -105,6 +106,32 @@ namespace DemoSTL
     distance_(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
     {
         return last-first;
+    }
+
+    // advance
+    // 用于将特定的迭代器移动特定的距离
+    template<class Iterator, class Distance>
+    inline void advance(Iterator &i, Distance n)
+    {
+        advance_(i, n, iterator_category(i));
+    }
+
+    template<class InputIterator, class Distance>
+    inline void advance_(InputIterator &i, Distance n, input_iterator_tag)
+    {
+        while(n--) i++;
+    }
+
+    template<class BidirectionalIterator, class Distance>
+    inline void advance_(BidirectionalIterator &i, Distance n, bidirectional_iterator_tag)
+    {
+        if(n >= 0) while(n--) i++;
+        else while(n++) i--;
+    }
+    template<class RandomAccessIterator, class Distance>
+    inline void advance_(RandomAccessIterator &i, Distance n, random_access_iterator_tag)
+    {
+        i += n;
     }
 }
 
