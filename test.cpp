@@ -12,18 +12,9 @@
  * 直接在上一级目录下的CMakeList.txt使用include_directories()包含就好了
  * 可以使用file(GLOB ...)命令包含 */
 
-
-#include "MySTL/allocator.hpp"
-#include "MySTL/memory.hpp"
+#include "MySTL/vector.hpp"
 
 struct test
 {
-    DemoSTL::allocator<int> test_allocator_demo;
-    test();
+    test() = default;
 };
-
-test::test()
-{
-    DemoSTL::allocator<int> tmp;
-    this->test_allocator_demo = tmp;
-}
