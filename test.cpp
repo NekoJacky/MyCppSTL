@@ -13,8 +13,14 @@
  * 可以使用file(GLOB ...)命令包含 */
 
 #include "MySTL/vector.hpp"
+#include "test.h"
+#include <iostream>
 
-struct test
+test::test()
 {
-    test() = default;
-};
+    DemoSTL::vector<int> v_test;
+
+    v_test.push_back(1);
+
+    std::cout << v_test[0] << std::endl;
+}

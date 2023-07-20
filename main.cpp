@@ -3,9 +3,11 @@
 //
 
 #include <iostream>
+#include "test.h"
 
 int main()
 {
     std::cout << "Hello World!" << std::endl;
+    test t;
     return 0;
 }

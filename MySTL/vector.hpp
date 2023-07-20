@@ -9,6 +9,11 @@
 
 namespace DemoSTL
 {
+    /* class vector
+     * 需要一长串的连续空间
+     * 空间只增不减
+     * iterator可以直接使用原生指针 */
+
     template<class T, class alloc=alloc>
     class vector
     {
@@ -119,10 +124,33 @@ namespace DemoSTL
             finish--;
             destroy(finish);
         }
-        iterator erase(iterator position);
-        void resize(size_type new_size, const T& x);
-        void resize(size_type new_size);
-        void clear();
+        iterator erase(iterator position)
+        {
+            if(position + 1 != finish)
+                std::copy(position+1, finish, position);
+            finish--;
+            destroy(finish);
+            return position;
+        }
+        iterator erase(iterator position_start, iterator position_finish)
+        {
+            size_type dif = position_finish - position_start;
+            iterator finish_tmp = finish;
+            if(position_finish + 1 != finish)
+                std::copy(position_finish+1, finish, position_start);
+            finish -= dif;
+            destroy(finish, finish_tmp);
+            return position_start;
+        }
+        void resize(size_type new_size, const T& x)
+        {
+            if(new_size < size())
+                erase(start+new_size, finish);
+            else
+                insert(finish, new_size-size(), x);
+        }
+        void resize(size_type new_size) { resize(new_size, T()); }
+        void clear() { erase(start, finish); }
     };
 } // DemoSTL
 

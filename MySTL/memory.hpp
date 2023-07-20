@@ -44,7 +44,7 @@ namespace DemoSTL
             return (T*) alloc::allocate(sizeof(T));
         }
 
-        static T *deallocate(T *p, size_t n)
+        static void deallocate(T *p, size_t n)
         {
             if(n != 0)
             {
@@ -52,7 +52,7 @@ namespace DemoSTL
             }
         }
 
-        static T *deallocate(T *p)
+        static void deallocate(T *p)
         {
             alloc::deallocate(p, sizeof(T));
         }

@@ -16,20 +16,6 @@
 
 namespace DemoSTL
 {
-    // 将First到Last范围内的对象复制构造于result
-    template<class InputIterator, class ForwardIterator>
-    inline ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result)
-    {
-        return _uninitialized_copy(first, last, result, value_type(result));
-    }
-
-    template<class InputIterator, class ForwardIterator, class T>
-    inline ForwardIterator _uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result, T*)
-    {
-        typedef typename std::is_pod<T> is_pod;
-        return _uninitialized_copy_aux(first, last, result, is_pod());
-    }
-
     // 是pod类型，则保证效率
     template<class InputIterator, class ForwardIterator>
     inline ForwardIterator
@@ -49,6 +35,20 @@ namespace DemoSTL
             construct(&*current, *first);
         }
         return current;
+    }
+
+    template<class InputIterator, class ForwardIterator, class T>
+    inline ForwardIterator _uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result, T*)
+    {
+        typedef typename std::is_pod<T> is_pod;
+        return _uninitialized_copy_aux(first, last, result, is_pod());
+    }
+
+    // 将First到Last范围内的对象复制构造于result
+    template<class InputIterator, class ForwardIterator>
+    inline ForwardIterator uninitialized_copy(InputIterator first, InputIterator last, ForwardIterator result)
+    {
+        return _uninitialized_copy(first, last, result, value_type(result));
     }
 
     // 特化

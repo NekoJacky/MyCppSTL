@@ -204,7 +204,7 @@ namespace DemoSTL
                     if(p != nullptr)
                     {
                         *p_free_list = p->free_list_link;
-                        start_free = p;
+                        start_free = (char*)p;
                         end_free = start_free + i;
                         return chunk_alloc(size, objs);
                     }

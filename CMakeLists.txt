@@ -8,8 +8,5 @@ include_directories(.)
 
 aux_source_directory(. SRCS)
 
-add_subdirectory(MySTL)
+add_executable(MyCppSTL ${SRCS} test.h)
 
-add_executable(MyCppSTL ${SRCS})
-
-target_link_libraries(MyCppSTL MySTL)

@@ -7,6 +7,7 @@
 
 #include <new>
 #include <type_traits>
+#include "MySTL/STLIterator.hpp"
 
 // 定义了构造与析构的方法construct()与destroy()
 // 这两个函数都是全局函数
@@ -32,20 +33,6 @@ namespace DemoSTL
         p->~T();
     }
 
-    template<class ForwardIterator>
-    inline void destroy(ForwardIterator First, ForwardIterator Last)
-    {
-        _destroy(First, Last, value_type(First));
-    }
-
-    template<class ForwardIterator, class T>
-    inline void _destroy(ForwardIterator First, ForwardIterator Last, T*)
-    {
-        // 类型萃取 type traits
-        typedef typename std::is_trivially_destructible<T> trivial_destroy;
-        _destroy_aux(First, Last, trivial_destroy());
-    }
-
     // 如果没有 trivial destructor，则需要调用其析构函数
     template<class ForwardIterator>
     inline void _destroy_aux(ForwardIterator First, ForwardIterator Last, std::false_type)
@@ -61,10 +48,23 @@ namespace DemoSTL
     template<class ForwardIterator>
     inline void _destroy_aux(ForwardIterator First, ForwardIterator Last, std::true_type) {}
 
+    template<class ForwardIterator, class T>
+    inline void _destroy(ForwardIterator First, ForwardIterator Last, T*)
+    {
+        // 类型萃取 type traits
+        typedef typename std::is_trivially_destructible<T> trivial_destroy;
+        _destroy_aux(First, Last, trivial_destroy());
+    }
+
+    template<class ForwardIterator>
+    inline void destroy(ForwardIterator First, ForwardIterator Last)
+    {
+        _destroy(First, Last, value_type(First));
+    }
+
     // 特化
     inline void destroy(char*, char*) {};
     inline void destroy(wchar_t*, wchar_t*) {};
 }
-
 
 #endif //MYCPPSTL_CONSTRUCT_HPP
