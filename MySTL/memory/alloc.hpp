@@ -161,13 +161,13 @@ namespace DemoSTL
         size_t need = size * objs;
         size_t left = end_free - start_free;
 
-        if(left > need)
+        if(left >= need)
         {
             result = start_free;
             start_free += need;
             return result;
         }
-        else if(left > size)
+        else if(left >= size)
         {
             objs = (int)(left / size);
             need = size * objs;
@@ -217,7 +217,7 @@ namespace DemoSTL
             }
 
             heap_size += get;
-            end_free = start_free += get;
+            end_free = start_free + get;
             return chunk_alloc(size, objs);
         }
     }

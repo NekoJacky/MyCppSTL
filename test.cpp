@@ -21,6 +21,8 @@ test::test()
     DemoSTL::vector<int> v_test;
 
     v_test.push_back(1);
-
+    std::cout << v_test[0] << std::endl;
+    v_test.pop_back();
+    v_test.push_back(2);
     std::cout << v_test[0] << std::endl;
 }
