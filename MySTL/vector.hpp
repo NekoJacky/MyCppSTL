@@ -92,13 +92,30 @@ namespace DemoSTL
         [[nodiscard]] size_type size() const { return size_type(finish-start); }
         [[nodiscard]] size_type capacity() const { return size_type(end_of_storage-start); }
         bool empty(){ return start == finish; }
+
+        /* 没有重载=运算符 */
         reference operator[](size_type n) { return *(start+n); }
 
+        /* 没有使用另一个vector的区间进行构造的重载 */
         vector(): start(nullptr), finish(nullptr), end_of_storage(nullptr) {}
         explicit vector(size_type n) { fill_initialized(n, T()); }
         vector(size_type n, const T& value) { fill_initialized(n, value); }
         vector(int n, const T& value) { fill_initialized(n, value); }
         vector(long n, const T& value) { fill_initialized(n, value); }
+        explicit vector(const vector<T>& other)
+        {
+            size_t len = other.capacity();
+            start = data_alloc::allocate(len);
+            finish = start;
+            end_of_storage = start + len;
+            for(iterator i = other.start; i != other.finish; i++)
+            {
+                T n = *i;
+                this->push_back(n);
+            }
+        }
+        explicit vector(const vector<T>&& other)  noexcept { this = std::move(other); }
+
         ~vector()
         {
             destroy(start, finish);

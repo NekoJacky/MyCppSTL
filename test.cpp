@@ -18,11 +18,21 @@
 
 test::test()
 {
-    DemoSTL::vector<int> v_test;
+    DemoSTL::vector<int> v_test1;
 
-    v_test.push_back(1);
-    std::cout << v_test[0] << std::endl;
-    v_test.pop_back();
-    v_test.push_back(2);
-    std::cout << v_test[0] << std::endl;
+    v_test1.push_back(1);
+    std::cout << v_test1[0] << std::endl;
+    v_test1.pop_back();
+    v_test1.push_back(2);
+    std::cout << v_test1[0] << std::endl;
+    std::cout << "v_test1 = { ";
+    for (int n : v_test1)
+        std::cout << n << ", ";
+    std::cout << "}; \n";
+
+    DemoSTL::vector<int> v_test2(v_test1);
+    std::cout << "v_test2 = { ";
+    for (int n : v_test2)
+        std::cout << n << ", ";
+    std::cout << "}; \n";
 }
