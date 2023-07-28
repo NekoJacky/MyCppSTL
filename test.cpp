@@ -13,11 +13,13 @@
  * 可以使用file(GLOB ...)命令包含 */
 
 #include "MySTL/vector.hpp"
+#include "MySTL/list.hpp"
 #include "test.h"
 #include <iostream>
 
 test::test()
 {
+    // Test vector
     DemoSTL::vector<int> v_test1;
 
     v_test1.push_back(1);
@@ -25,6 +27,7 @@ test::test()
     v_test1.pop_back();
     v_test1.push_back(2);
     std::cout << v_test1[0] << std::endl;
+    v_test1.push_back(5);
     std::cout << "v_test1 = { ";
     for (int n : v_test1)
         std::cout << n << ", ";
@@ -35,4 +38,7 @@ test::test()
     for (int n : v_test2)
         std::cout << n << ", ";
     std::cout << "}; \n";
+
+
+    // Test list
 }
