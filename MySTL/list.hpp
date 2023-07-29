@@ -138,6 +138,10 @@ namespace DemoSTL
             destroy_node(position.p_node);
             return next;
         }
+        /*void transfer(iterator position, iterator first, iterator last) // 将[first， last)之间所有元素移到position之前
+        {
+
+        }*/
 
     public:
         list() { empty_initialize(); }          // default;
@@ -146,7 +150,24 @@ namespace DemoSTL
         void push_front(const T& x) { insert(begin(), x); }
         void pop_back() { erase(--end()); }
         void pop_front() { erase(begin()); }
-        void clear();
+        void clear();                           // 清除整个表
+        void remove(const T& value);            // 移除所有值为value的元素
+        void unique();
+        iterator find(iterator first, iterator last, const T& value)
+        {
+            while(first != last)
+            {
+                if(*first == value) return first;
+                ++first;
+            }
+            return nullptr;
+        }
+        iterator find(const T& value)
+        {
+            iterator first = begin();
+            iterator last = end();
+            return find(first, last, value);
+        }
     };
 
     template<class T, class alloc>
@@ -161,6 +182,41 @@ namespace DemoSTL
         }
         p_node->p_next = p_node;
         p_node->p_prev = p_node;
+    }
+
+    template<class T, class alloc>
+    void list<T, alloc>::remove(const T &value)
+    {
+        iterator first = begin();
+        iterator last = end();
+        while(first != last)
+        {
+            iterator next = first;
+            next++;
+            if(first.p_node->data == value) erase(first);
+            first++;
+        }
+    }
+
+    template<class T, class alloc>
+    void list<T, alloc>::unique()
+    {
+        iterator first = begin();
+        iterator last = end();
+        if(first == last) return ;
+        iterator next = first;
+        next++;
+        while(next != last)
+        {
+            while(next != last && *next == *first)
+            {
+                iterator tmp = next;
+                next++;
+                erase(tmp);
+            }
+            first = next;
+            next++;
+        }
     }
 }
 
