@@ -7,10 +7,10 @@
 - allocator
 - iterator基类
 - vector
+- list
 
 #### 计划完成
 
-- list
 - stack ?
-- RBtree/map
+- RBtree/map/set
 - smart pointers
