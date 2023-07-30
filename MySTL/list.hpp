@@ -126,7 +126,7 @@ namespace DemoSTL
             tmp->p_next = position.p_node;
             tmp->p_prev = position.p_node->p_prev;
             position.p_node->p_prev = tmp;
-            link_type (position.p_node->p_prev)->p_next = tmp;
+            link_type(position.p_node->p_prev)->p_next = tmp;
             return tmp;
         }
         iterator erase(iterator position)
@@ -138,10 +138,19 @@ namespace DemoSTL
             destroy_node(position.p_node);
             return next;
         }
-        /*void transfer(iterator position, iterator first, iterator last) // 将[first， last)之间所有元素移到position之前
+        void transfer(iterator position, iterator first, iterator last) // 将[first， last)之间所有元素移到position之前
         {
-
-        }*/
+            if(position != last)
+            {
+                link_type(last.p_node->p_prev)->p_next = position.p_node;
+                link_type(first.p_node->p_prev)->p_next = last.p_node;
+                link_type(position.p_node->p_prev)->p_next = first.p_node;
+                link_type tmp = position.p_node->p_prev;
+                position.p_node->p_prev = last.p_node->p_prev;
+                last.p_node->p_prev = first.p_node->p_prev;
+                first.p_node->p_prev = tmp;
+            }
+        }
 
     public:
         list() { empty_initialize(); }          // default;
@@ -168,6 +177,26 @@ namespace DemoSTL
             iterator last = end();
             return find(first, last, value);
         }
+        void splice(iterator position, list& x)
+        {
+            if(!x.empty())
+                transfer(position, x.begin(), x.end());
+        }
+        void splice(iterator position, list& x, iterator i)
+        {
+            iterator j = i++;
+            if(position == i || position == j) return ;
+            transfer(position, j, i);
+        }
+        void splice(iterator position, list& x, iterator first, iterator last)
+        {
+            if(first != last)
+                transfer(position, first, last);
+        }
+        void swap(list& x);
+        void merge(list& x);
+        void reverse();
+        void sort();
     };
 
     template<class T, class alloc>
@@ -217,6 +246,82 @@ namespace DemoSTL
             first = next;
             next++;
         }
+    }
+
+    template<class T, class alloc>
+    void list<T, alloc>::swap(list<T, alloc> &x)
+    {
+        list<T> tmp;
+        iterator first = p_node;
+        iterator first_x = x.p_node;
+        iterator first_tmp = tmp.p_node;
+        transfer(first_tmp, x.begin(), x.end());
+        transfer(first_x, begin(), end());
+        transfer(first, tmp.begin(), tmp.end());
+    }
+
+    // 将x合并到*this
+    // 两个list都必须经过递增排序
+    template<class T, class alloc>
+    void list<T, alloc>::merge(list<T, alloc> &x)
+    {
+        iterator first1 = begin();
+        iterator last1 = end();
+        iterator first2 = x.begin();
+        iterator last2 = x.end();
+
+        while(first1 != last1 && first2 != last2)
+        {
+            if(first1.p_node->data >= first2.p_node->data)
+            {
+                iterator next = first2;
+                transfer(first1, first2, ++next);
+                first2 = next;
+            }
+            else
+                ++first1;
+        }
+
+        if(first2 != last2)
+            transfer(last1, first2, last2);
+    }
+
+    // 将*this内容反向重置
+    template<class T, class alloc>
+    void list<T, alloc>::reverse()
+    {
+        if(p_node->p_next == p_node || link_type(p_node->p_next)->p_next == p_node) return ;
+        iterator first = ++begin();
+        while(first != end())
+        {
+            iterator old = first++;
+            transfer(begin(), old, first);
+        }
+    }
+
+    // 快排
+    template<class T, class alloc>
+    void list<T, alloc>::sort()
+    {
+        if(p_node->p_next == p_node || link_type(p_node->p_next)->p_next == p_node) return ;
+        list<T> carry;
+        list<T> counter[64];
+        int fill = 0;
+        while(!empty())
+        {
+            carry.splice(carry.begin(), *this, begin());
+            int i = 0;
+            while(i < fill && !counter[i].empty())
+            {
+                counter[i].merge(carry);
+                carry.swap(counter[i++]);
+            }
+            carry.swap(counter[i]);
+            if(i == fill) ++fill;
+        }
+        for(int i = 1; i < fill; i++)
+            counter[i].merge(counter[i-1]);
+        swap(counter[fill-1]);
     }
 }
 
