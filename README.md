@@ -8,9 +8,9 @@
 - iterator基类
 - vector
 - list
+- stack
 
 #### 计划完成
 
-- stack ?
 - RBtree/map/set
 - smart pointers
