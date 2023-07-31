@@ -12,7 +12,8 @@
 
 namespace DemoSTL
 {
-    // 一个简单的空间配置器，包装了new和delete，不建议使用
+    // 一个简单的空间配置器，包装了new和delete
+    // 本项目中并未使用该allocator，而是使用了"memory.hpp"及./memory下的allocator
 
     template<class T>
     inline T* _allocate(ptrdiff_t size, T*)
