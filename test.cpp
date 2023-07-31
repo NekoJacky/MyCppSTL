@@ -14,6 +14,7 @@
 
 #include "MySTL/vector.hpp"
 #include "MySTL/list.hpp"
+#include "MySTL/stack.hpp"
 #include "test.h"
 #include <iostream>
 
