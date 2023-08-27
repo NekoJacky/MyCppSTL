@@ -15,6 +15,8 @@
 #include "MySTL/vector.hpp"
 #include "MySTL/list.hpp"
 #include "MySTL/stack.hpp"
+// rb_tree在其它文件中用到后就可以把下面一行删了
+#include "MySTL/rb_tree.hpp"
 #include "test.h"
 #include <iostream>
 
