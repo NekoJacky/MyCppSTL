@@ -127,9 +127,9 @@ namespace DemoSTL
         explicit rb_tree_iterator(const iterator& i) : rb_tree_iterator_base() {p_node = i.p_node;}
 
         reference operator*() {return link_type(p_node)->value;}
-#ifndef NO_ARROW_OPERATOR
+        #ifndef NO_ARROW_OPERATOR
         pointer operator->() {return &(operator*());}
-#endif
+        #endif
         self& operator++() {increment(); return *this;}
         self operator++(int)
         {
@@ -144,6 +144,88 @@ namespace DemoSTL
             decrement();
             return tmp;
         }
+    };
+
+    template<class Key, class Value, class KeyOfValue, class Compare, class Alloc=alloc>
+    class rb_tree
+    {
+    protected:
+        using void_ptr                  = void*;
+        using base_ptr                  = rb_tree_node_base*;
+        using rb_tree_node              = rb_tree_node<Value>;
+        using rb_tree_node_allocator    = simple_alloc<rb_tree_node, alloc>;
+        using color_type                = typename rb_tree_node::color_type;
+    public:
+        using key_type                  = Key;
+        using value_type                = Value;
+        using pointer                   = value_type*;
+        using const_pointer             = const value_type*;
+        using reference                 = value_type&;
+        using const_reference           = const value_type&;
+        using link_type                 = rb_tree_node*;
+        using size_type                 = size_t;
+        using difference_type           = ptrdiff_t;
+    protected:
+        link_type get_node() { return rb_tree_node_allocator::allocate(); }
+        void put_node(link_type p) { rb_tree_node_allocator::deallocate(p); }
+
+        link_type create_node(const_reference x)
+        {
+            link_type tmp = get_node();
+            try
+            {
+                construct(&tmp->value, x);
+            }
+            catch(...)
+            {
+                put_node(tmp);
+            }
+            return tmp;
+        }
+
+        link_type clone_node(link_type x)
+        {
+            link_type tmp = create_node(x->value);
+            tmp->color = x->color;
+            tmp->right = nullptr;
+            tmp->left = nullptr;
+            tmp->parent = nullptr;
+            return tmp;
+        }
+
+        void destroy_node(link_type p)
+        {
+            destroy(&p->value);
+            put_node(p);
+        }
+
+    protected:
+        size_type node_count;   // 用于记录节点个数
+        link_type header;
+        Compare key_compare;    // functional obj，用于比较node值
+
+        // header->parent指向根节点
+        link_type root() { return header->parent; }
+        link_type left_most() { return header->left; }
+        link_type right_most() { return header->right; }
+
+        static link_type &left(link_type x) { return x->left; }
+        static link_type &right(link_type x) { return x->right; }
+        static link_type &parent(link_type x) { return x->parent; }
+        static reference value(link_type x) { return x->value; }
+        // KeyOfValue()(value(x))表示调用KeyOfValue的operator()函数，参数为value(x)
+        static const Key& key(link_type x) { return KeyOfValue()(value(x)); }
+        static color_type &color(link_type x) { return x->color; }
+
+        static link_type &left(base_ptr x) { return x->left; }
+        static link_type &right(base_ptr x) { return x->right; }
+        static link_type &parent(base_ptr x) { return x->parent; }
+        static reference value(base_ptr x) { return ((link_type)x)->value; }
+        static const Key& key(base_ptr x) { return KeyOfValue()(value(link_type(x))); }
+        static color_type &color(base_ptr x) { return ((link_type)x)->color; }
+
+        static link_type min(link_type x) { return rb_tree_node_base::min(x); }
+        static link_type max(link_type x) { return rb_tree_node_base::max(x); }
     };
 } // DemoSTL
 

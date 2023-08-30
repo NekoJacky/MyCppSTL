@@ -87,6 +87,7 @@ namespace DemoSTL
         typedef list_node<T> list_node;
         typedef simple_alloc<list_node, alloc> list_node_alloc;
     public:
+        // link_type指向节点 一般出现pointer时指向元素类型
         typedef list_node* link_type;
 
     protected:
