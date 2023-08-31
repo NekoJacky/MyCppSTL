@@ -226,6 +226,56 @@ namespace DemoSTL
 
         static link_type min(link_type x) { return rb_tree_node_base::min(x); }
         static link_type max(link_type x) { return rb_tree_node_base::max(x); }
+
+    public:
+        using iterator  = rb_tree_iterator<value_type , reference, pointer>;
+
+    private:
+        /*iterator insert_(base_ptr x, base_ptr y, const_reference v)
+        {
+            return DemoSTL::rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::iterator();
+        }
+        link_type copy_(base_ptr x, link_type p)
+        {
+            return nullptr;
+        }
+        void erase_(link_type x)
+        {
+        }*/
+        void init()
+        {
+            header = get_node();
+            color(header) = red;
+
+            root() = nullptr;
+            left_most() = header;
+            right_most() = header;
+        }
+
+    public:
+        explicit rb_tree(const Compare& comp = Compare()): node_count(0), key_compare(comp) { init(); }
+        /*~rb_tree() { clear(); put_node(header); }*/
+
+        /*rb_tree<Key, Value, KeyOfValue, Compare>&
+        operator=(const rb_tree<Key, Value, KeyOfValue, Compare>& x)
+        {
+        }*/
+
+    public:
+        Compare key_comp() const { return key_compare; }
+        iterator begin() { return left_most(); }
+        iterator end() { return header; }
+        bool empty() { return node_count == 0; }
+        size_type size() { return node_count; }
+        [[nodiscard]] size_type max_size() const { return size_type(-1); }
+
+    public:
+        /*std::pair<iterator, bool> insert_unique(const_reference x)
+        {
+        }
+        iterator insert_equal(const_reference x)
+        {
+        }*/
     };
 } // DemoSTL
 
