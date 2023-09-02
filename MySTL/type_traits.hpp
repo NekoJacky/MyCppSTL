@@ -21,7 +21,7 @@ namespace DemoSTL
     };
 
     /* 其它的实在太多太杂了
-     * 直接用std中的<type_traits>吧 */
+     * 直接用std中的<type_traits>吧（笑） */
 }
 
 #endif //MYCPPSTL_TYPE_TRAITS_HPP

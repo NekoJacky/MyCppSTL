@@ -123,8 +123,8 @@ namespace DemoSTL
         using link_type         = rb_tree_node<Value>*;
 
         rb_tree_iterator() = default;
-        explicit rb_tree_iterator(link_type x) : rb_tree_iterator_base() {p_node = x;}
-        explicit rb_tree_iterator(const iterator& i) : rb_tree_iterator_base() {p_node = i.p_node;}
+        explicit rb_tree_iterator(link_type x) : rb_tree_iterator_base() { p_node = x; }
+        explicit rb_tree_iterator(const iterator& i) : rb_tree_iterator_base() { p_node = i.p_node; }
 
         reference operator*() {return link_type(p_node)->value;}
         #ifndef NO_ARROW_OPERATOR
@@ -213,7 +213,6 @@ namespace DemoSTL
         static link_type &right(link_type x) { return x->right; }
         static link_type &parent(link_type x) { return x->parent; }
         static reference value(link_type x) { return x->value; }
-        // KeyOfValue()(value(x))表示调用KeyOfValue的operator()函数，参数为value(x)
         static const Key& key(link_type x) { return KeyOfValue()(value(x)); }
         static color_type &color(link_type x) { return x->color; }
 
@@ -230,16 +229,50 @@ namespace DemoSTL
     public:
         using iterator  = rb_tree_iterator<value_type , reference, pointer>;
 
-    private:
-        /*iterator insert_(base_ptr x, base_ptr y, const_reference v)
+    protected:
+        inline void rb_tree_re_balance(rb_tree_node_base* x, rb_tree_node_base*& root)
         {
-            return DemoSTL::rb_tree<Key, Value, KeyOfValue, Compare, Alloc>::iterator();
+            // todo rb_tree_re_balance() -4
         }
-        link_type copy_(base_ptr x, link_type p)
+
+    private:
+        iterator insert_(base_ptr x_, base_ptr y_, const_reference v)
+        {
+            link_type x = x_;
+            link_type y = y_;
+            link_type z;
+            if(y == header || key_compare(KeyOfValue()(v), key(y)) || x != nullptr)
+            {
+                z = create_node(v);
+                left(y) = z;
+                if(y == header)
+                {
+                    root() = z;
+                    right_most() = z;
+                }
+                else if(y == left_most())
+                    left_most() = z;
+            }
+            else
+            {
+                z = create_node(v);
+                right(y) = z;
+                if(y == right_most())
+                    right_most() = z;
+            }
+            parent(z) = y;
+            left(z) = nullptr;
+            right(z) = nullptr;
+
+            rb_tree_re_balance(z, header->parent);
+            node_count++;
+            return iterator(z);
+        }
+        /*link_type copy_(base_ptr x, link_type p)
         {
             return nullptr;
-        }
-        void erase_(link_type x)
+        }*/
+        /*void erase_(link_type x)
         {
         }*/
         void init()
@@ -254,7 +287,7 @@ namespace DemoSTL
 
     public:
         explicit rb_tree(const Compare& comp = Compare()): node_count(0), key_compare(comp) { init(); }
-        /*~rb_tree() { clear(); put_node(header); }*/
+        /*~rb_tree() { clear(); put_node(header); } todo: clear() -u */
 
         /*rb_tree<Key, Value, KeyOfValue, Compare>&
         operator=(const rb_tree<Key, Value, KeyOfValue, Compare>& x)
@@ -270,12 +303,42 @@ namespace DemoSTL
         [[nodiscard]] size_type max_size() const { return size_type(-1); }
 
     public:
-        /*std::pair<iterator, bool> insert_unique(const_reference x)
+        std::pair<iterator, bool> insert_unique(const_reference v)
         {
+            link_type y = header;
+            link_type x = root();
+            bool comp = true;
+            while(x != nullptr)
+            {
+                y = x;
+                comp = key_compare(KeyOfValue()(v), key(x));
+                x = comp ? left(x) : right(x);
+            }
+
+            iterator j = iterator(y);
+            if(comp)
+            {
+                if(j == begin())
+                    return std::pair<iterator, bool>(insert_(x, y, v), true);
+                else
+                    j--;
+            }
+            if(key_compare(key(j.p_node), KeyOfValue()(v)))
+                return std::pair<iterator, bool>(insert_(x, y, v), true);
+
+            return std::pair<iterator, bool>(j, false);
         }
-        iterator insert_equal(const_reference x)
+        iterator insert_equal(const_reference v)
         {
-        }*/
+            link_type y = header;
+            link_type x = root();
+            while(x != nullptr)
+            {
+                y = x;
+                x = key_compare(KeyOfValue()(v), key(x)) ? left(x) : right(x);
+            }
+            return insert_(x, y, v);
+        }
     };
 } // DemoSTL
 
