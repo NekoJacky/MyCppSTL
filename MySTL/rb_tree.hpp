@@ -10,6 +10,7 @@
 namespace DemoSTL
 {
     typedef bool rb_tree_type;
+    // 如果是我，我可能会用enum表示red和black？
     const rb_tree_type red = false;
     const rb_tree_type black = true;
 
@@ -209,19 +210,19 @@ namespace DemoSTL
         link_type left_most() { return header->left; }
         link_type right_most() { return header->right; }
 
-        static link_type &left(link_type x) { return x->left; }
-        static link_type &right(link_type x) { return x->right; }
-        static link_type &parent(link_type x) { return x->parent; }
+        static link_type& left(link_type x) { return x->left; }
+        static link_type& right(link_type x) { return x->right; }
+        static link_type& parent(link_type x) { return x->parent; }
         static reference value(link_type x) { return x->value; }
         static const Key& key(link_type x) { return KeyOfValue()(value(x)); }
-        static color_type &color(link_type x) { return x->color; }
+        static color_type& color(link_type x) { return x->color; }
 
-        static link_type &left(base_ptr x) { return x->left; }
-        static link_type &right(base_ptr x) { return x->right; }
-        static link_type &parent(base_ptr x) { return x->parent; }
+        static link_type& left(base_ptr x) { return x->left; }
+        static link_type& right(base_ptr x) { return x->right; }
+        static link_type& parent(base_ptr x) { return x->parent; }
         static reference value(base_ptr x) { return ((link_type)x)->value; }
         static const Key& key(base_ptr x) { return KeyOfValue()(value(link_type(x))); }
-        static color_type &color(base_ptr x) { return ((link_type)x)->color; }
+        static color_type& color(base_ptr x) { return ((link_type)x)->color; }
 
         static link_type min(link_type x) { return rb_tree_node_base::min(x); }
         static link_type max(link_type x) { return rb_tree_node_base::max(x); }
@@ -230,9 +231,83 @@ namespace DemoSTL
         using iterator  = rb_tree_iterator<value_type , reference, pointer>;
 
     protected:
+        inline void rb_tree_rotate_left(rb_tree_node_base* x, rb_tree_node_base*& root)
+        {
+            rb_tree_node_base* y = x->right;
+            x->right = y->left;
+            if(y->left != nullptr)
+                y->left->parent = x;
+            y->parent = x->parent;
+            if(x == root) root = y;
+            else if(x == x->parent->left) x->parent->left = y;
+            else x->parent->right = y;
+            y->left = x;
+            x->parent = y;
+        }
+        inline void rb_tree_rotate_right(rb_tree_node_base* x, rb_tree_node_base*& root)
+        {
+            rb_tree_node_base* y = x->left;
+            x->left = y->right;
+            if(y->right != nullptr)
+                y->right->parent = x;
+            y->parent = x->parent;
+            if(x == root) root = y;
+            else if(x == x->parent->right) x->parent->right = y;
+            else x->parent->left = y;
+            y->right = x;
+            x->parent = y;
+        }
         inline void rb_tree_re_balance(rb_tree_node_base* x, rb_tree_node_base*& root)
         {
-            // todo rb_tree_re_balance() -4
+            x->color = red;
+            while(x != root && x->parent->color == red)
+            {
+                if(x->parent == x->parent->parent->left)
+                {
+                    rb_tree_node_base* y = x->parent->parent->right;
+                    if(y && y->color == red)
+                    {
+                        x->parent->color = black;
+                        y->color = black;
+                        x->parent->parent->color = red;
+                        x = x->parent->parent;
+                    }
+                    else
+                    {
+                        if(x == x->parent->right)
+                        {
+                            x = x->parent;
+                            rb_tree_rotate_left(x, root);
+                        }
+                        x->parent->color = black;
+                        x->parent->parent->color = red;
+                        rb_tree_rotate_right(x->parent->parent, root);
+                    }
+                }
+                else
+                {
+                    rb_tree_node_base* y = x->parent->parent->left;
+                    if(y && y->color == red)
+                    {
+                        x->parent->color = black;
+                        y->color = black;
+                        x->parent->parent->color = red;
+                        x = x->parent->parent;
+                    }
+                    else
+                    {
+                        if(x == x->parent->left)
+                        {
+                            x = x->parent;
+                            rb_tree_rotate_right(x, root);
+                        }
+                        x->parent->color = black;
+                        x->parent->parent->color = red;
+                        rb_tree_rotate_left(x->parent->parent, root);
+                    }
+                }
+            }
+            root->color = black;
         }
 
     private:
@@ -268,11 +343,11 @@ namespace DemoSTL
             node_count++;
             return iterator(z);
         }
-        /*link_type copy_(base_ptr x, link_type p)
+        /*link_type copy_(base_ptr x, link_type p) todo
         {
             return nullptr;
         }*/
-        /*void erase_(link_type x)
+        /*void erase_(link_type x) todo
         {
         }*/
         void init()
@@ -290,7 +365,7 @@ namespace DemoSTL
         /*~rb_tree() { clear(); put_node(header); } todo: clear() -u */
 
         /*rb_tree<Key, Value, KeyOfValue, Compare>&
-        operator=(const rb_tree<Key, Value, KeyOfValue, Compare>& x)
+        operator=(const rb_tree<Key, Value, KeyOfValue, Compare>& x) todo
         {
         }*/
 
