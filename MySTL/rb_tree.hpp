@@ -343,11 +343,24 @@ namespace DemoSTL
             node_count++;
             return iterator(z);
         }
-        /*link_type copy_(base_ptr x, link_type p) todo
+        void clear_(link_type x)
         {
-            return nullptr;
+            link_type left = x->left;
+            link_type right = x->right;
+            if(left)
+                clear_(left);
+            if(right)
+                clear_(right);
+            destroy_node(x);
+        }
+        void clear()
+        {
+            clear_(root());
+        }
+        /*link_type copy_(base_ptr x, link_type p)
+        {
         }*/
-        /*void erase_(link_type x) todo
+        /*void erase_(link_type x)
         {
         }*/
         void init()
@@ -362,12 +375,7 @@ namespace DemoSTL
 
     public:
         explicit rb_tree(const Compare& comp = Compare()): node_count(0), key_compare(comp) { init(); }
-        /*~rb_tree() { clear(); put_node(header); } todo: clear() -u */
-
-        /*rb_tree<Key, Value, KeyOfValue, Compare>&
-        operator=(const rb_tree<Key, Value, KeyOfValue, Compare>& x) todo
-        {
-        }*/
+        ~rb_tree() { clear(); put_node(header); }
 
     public:
         Compare key_comp() const { return key_compare; }
@@ -413,6 +421,25 @@ namespace DemoSTL
                 x = key_compare(KeyOfValue()(v), key(x)) ? left(x) : right(x);
             }
             return insert_(x, y, v);
+        }
+
+        iterator find(const Key& k)
+        {
+            link_type y = header;
+            link_type x = root();
+
+            while(x != nullptr)
+            {
+                if(!key_compare(key(x), k))
+                {
+                    y = x, x = left(x);
+                }
+                else
+                    x = right(x);
+            }
+
+            iterator j = iterator(y);
+            return (j == end() || key_compare(k, key(j.p_node))) ? end() : j;
         }
     };
 } // DemoSTL
