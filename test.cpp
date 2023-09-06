@@ -17,6 +17,7 @@
 #include "MySTL/stack.hpp"
 // rb_tree在其它文件中用到后就可以把下面一行删了
 #include "MySTL/set.hpp"
+#include "MySTL/map.hpp"
 #include "test.h"
 #include <iostream>
 
