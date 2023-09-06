@@ -228,7 +228,8 @@ namespace DemoSTL
         static link_type max(link_type x) { return rb_tree_node_base::max(x); }
 
     public:
-        using iterator  = rb_tree_iterator<value_type , reference, pointer>;
+        using iterator          = rb_tree_iterator<value_type, reference, pointer>;
+        using const_iterator    = const rb_tree_iterator<value_type, reference, pointer>;
 
     protected:
         inline void rb_tree_rotate_left(rb_tree_node_base* x, rb_tree_node_base*& root)
