@@ -177,7 +177,6 @@ namespace DemoSTL
         }
         else
         {
-            // ?
             size_t get = 2*need + round_up(heap_size>>4);
 
             // 利用内存池中剩余的内存
