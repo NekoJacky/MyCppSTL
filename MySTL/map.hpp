@@ -39,8 +39,19 @@ namespace DemoSTL
         using value_type    = pair<const key_type, data_type>;
         using key_compare   = Compare;
 
-        auto value_compare(const value_type& x, const value_type& y)
-        { return key_compare(x.first, y.first); }
+        /*auto value_compare(const value_type& x, const value_type& y)
+        { return key_compare(x.first, y.first); }*/
+
+        class value_compare
+        {
+            friend class map<Key, T, Compare, Alloc>;
+        protected:
+            Compare comp;
+            explicit value_compare(Compare c): comp(c) {}
+        public:
+            bool operator() (const value_type& x, const value_type& y)
+            { return key_compare(x.first, y.first); }
+        };
 
     private:
         using rep_type  = rb_tree<Key, T, select1st<value_type>, key_compare, Alloc>;
@@ -55,6 +66,33 @@ namespace DemoSTL
         using const_iterator    = typename rep_type::const_iterator;
         using size_type         = typename rep_type::size_type;
         using difference_type   = typename rep_type::difference_type;
+
+        map(): t(Compare()) {}
+        explicit map(const Compare& comp): t(comp) {}
+
+        template<class InputIterator>
+        map(InputIterator first, InputIterator last): t(Compare())
+        { t.insert_unique(first, last); }
+
+        template<class InputIterator>
+        map(InputIterator first, InputIterator last, const Compare& comp): t(comp)
+        { t.insert_unique(first, last); }
+
+    public:
+        key_compare key_comp() const { return t.key_comp(); }
+        value_compare value_comp() const { return value_compare(t.key_comp()); }
+        iterator begin() { return t.begin(); }
+        const_iterator begin() const { return t.begin(); }
+        iterator end() { return t.end(); }
+        const_iterator end() const { return t.end(); }
+        bool empty() { return t.empty(); }
+        size_type size() { return t.size(); }
+        size_type max_size() { return t.max_size(); }
+
+        pair<iterator, bool> insert(const value_type &x)
+        { return t.insert_unique(x); }
+
+        // todo: operator[]
     };
 } // DemoSTL
 

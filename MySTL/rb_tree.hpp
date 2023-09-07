@@ -412,6 +412,13 @@ namespace DemoSTL
 
             return std::pair<iterator, bool>(j, false);
         }
+        iterator insert_unique(iterator first, iterator last)
+        {
+            iterator i = first;
+            for(i = first; i != last; i++)
+                insert_unique(*i);
+            return i;
+        }
         iterator insert_equal(const_reference v)
         {
             link_type y = header;
