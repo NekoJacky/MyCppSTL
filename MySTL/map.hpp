@@ -92,7 +92,19 @@ namespace DemoSTL
         pair<iterator, bool> insert(const value_type &x)
         { return t.insert_unique(x); }
 
-        // todo: operator[]
+        template<class InputIterator>
+        void insert(InputIterator first, InputIterator last)
+        { return t.insert_unique(first, last); }
+
+        T& operator[](const key_type &k)
+        {
+            return (*((insert(value_type(k, T()))).first)).second;
+        }
+
+        void clear() { t.clear(); }
+
+        iterator find(const key_type &k) { return t.find(k); }
+        const_iterator find(const key_type& k) const { return t.find(k); }
     };
 } // DemoSTL
 
