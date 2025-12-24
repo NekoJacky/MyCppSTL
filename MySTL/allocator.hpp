@@ -6,7 +6,6 @@
 #define MYCPPSTL_ALLOCATOR_HPP
 
 #include <iostream>
-#include <cstddef>
 #include <new>
 #include <climits>
 
@@ -16,14 +15,14 @@ namespace DemoSTL
     // 本项目中并未使用该allocator，而是使用了"memory.hpp"及./memory下的allocator
 
     template<class T>
-    inline T* _allocate(ptrdiff_t size, T*)
+    T* _allocate(const ptrdiff_t size, T*)
     {
         std::set_new_handler(nullptr);
         // 当内存不够申请空间失败时，默认抛出std::bad_alloc异常。当使用set_new_handler(new_handler)时，
         // 程序会转向new_handler指向的（我们自己写的）内存处理程序。
         // 当handler为nullptr时，强制令C++认为我们没有自定义的异常处理程序，
         // 即强制C++抛出std::bad_alloc异常。
-        T* tmp = (T*)(::operator new((size_t)(size * sizeof(T))));
+        T* tmp = static_cast<T *>(::operator new(size * sizeof(T)));
         if(!tmp)
         {
             std::cout << "out of memory" << std::endl;
@@ -33,19 +32,19 @@ namespace DemoSTL
     }
 
     template<class T>
-    inline void _deallocate(T* buffer)
+    void _deallocate(T* buffer)
     {
         ::operator delete(buffer);
     }
 
     template<class T1, class T2>
-    inline void _construct(T1* p, const T2& value)
+    void _construct(T1* p, const T2& value)
     {
         new(p) T1(value);
     }
 
     template<class T>
-    inline void _destroy(T* ptr)
+    void _destroy(T* ptr)
     {
         ptr -> ~T();
     }
@@ -71,7 +70,7 @@ namespace DemoSTL
 
         pointer allocate(size_type n, const void* hint= nullptr)
         {
-            return _allocate((difference_type) n, (pointer) 0);
+            return _allocate(static_cast<difference_type>(n), static_cast<pointer>(nullptr));
         }
 
         void deallocate(pointer p, size_type n)
@@ -89,14 +88,13 @@ namespace DemoSTL
             _destroy(p);
         }
 
-        const_pointer const_address(const_reference x)
+        static const_pointer const_address(const_reference x)
         {
-            return (const_pointer)& x;
+            return static_cast<const_pointer>(&x);
         }
 
-        [[nodiscard]] size_type max_size() const
-        {
-            return size_type(UINT_MAX / sizeof(T));
+        [[nodiscard]] static size_type max_size() {
+            return UINT_MAX / sizeof(T);
         }
     };
 

@@ -2,10 +2,8 @@
 // Created by Jacky on 2023/7/6.
 //
 
-#ifndef MYCPPSTL_STLITERATOR_H
-#define MYCPPSTL_STLITERATOR_H
-
-#include <cstddef>
+#ifndef MYCPPSTL_STL_ITERATOR_H
+#define MYCPPSTL_STL_ITERATOR_H
 
 /* 迭代器基类 */
 
@@ -68,41 +66,41 @@ namespace DemoSTL
     }
 
     template<class Iterator>
-    inline typename iterator_traits<Iterator>::difference_type * distance_type(const Iterator&)
+    typename iterator_traits<Iterator>::difference_type * distance_type(const Iterator&)
     {
-        return static_cast<typename iterator_traits<Iterator>::difference_type *> (0);
+        return static_cast<typename iterator_traits<Iterator>::difference_type *> (nullptr);
     }
 
     template<class Iterator>
-    inline typename iterator_traits<Iterator>::value_type * value_type(const Iterator&)
+    typename iterator_traits<Iterator>::value_type * value_type(const Iterator&)
     {
-        return static_cast<typename iterator_traits<Iterator>::value_type *> (0);
+        return static_cast<typename iterator_traits<Iterator>::value_type *> (nullptr);
     }
 
     // distance
     // 用于计算两个迭代器之间的距离
     template<class InputIterator>
-    inline typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
+    typename iterator_traits<InputIterator>::difference_type distance(InputIterator first, InputIterator last)
     {
         typedef typename iterator_traits<InputIterator>::iterator_category category;
         return distance_(first, last, category());
     }
 
     template<class InputIterator>
-    inline typename iterator_traits<InputIterator>::difference_type
+    typename iterator_traits<InputIterator>::difference_type
     distance_(InputIterator first, InputIterator last, input_iterator_tag)
     {
         typename iterator_traits<InputIterator>::difference_type n = 0;
         while(first != last)
         {
-            first++;
-            n++;
+            ++first;
+            ++n;
         }
         return n;
     }
 
     template<class RandomAccessIterator>
-    inline typename iterator_traits<RandomAccessIterator>::difference_type
+    typename iterator_traits<RandomAccessIterator>::difference_type
     distance_(RandomAccessIterator first, RandomAccessIterator last, random_access_iterator_tag)
     {
         return last-first;
@@ -111,28 +109,28 @@ namespace DemoSTL
     // advance
     // 用于将特定的迭代器移动特定的距离
     template<class Iterator, class Distance>
-    inline void advance(Iterator &i, Distance n)
+    void advance(Iterator &i, Distance n)
     {
         advance_(i, n, iterator_category(i));
     }
 
     template<class InputIterator, class Distance>
-    inline void advance_(InputIterator &i, Distance n, input_iterator_tag)
+    void advance_(InputIterator &i, Distance n, input_iterator_tag)
     {
-        while(n--) i++;
+        while(n--) ++i;
     }
 
     template<class BidirectionalIterator, class Distance>
-    inline void advance_(BidirectionalIterator &i, Distance n, bidirectional_iterator_tag)
+    void advance_(BidirectionalIterator &i, Distance n, bidirectional_iterator_tag)
     {
-        if(n >= 0) while(n--) i++;
-        else while(n++) i--;
+        if(n >= 0) while(n--) ++i;
+        else while(n++) --i;
     }
     template<class RandomAccessIterator, class Distance>
-    inline void advance_(RandomAccessIterator &i, Distance n, random_access_iterator_tag)
+    void advance_(RandomAccessIterator &i, Distance n, random_access_iterator_tag)
     {
         i += n;
     }
 }
 
-#endif //MYCPPSTL_STLITERATOR_H
+#endif //MYCPPSTL_STL_ITERATOR_H

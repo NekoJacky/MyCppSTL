@@ -23,11 +23,11 @@ namespace DemoSTL
     template<class Pair>
     struct select1st
     {
-        using arguement_type    = Pair;
+        using argument_type    = Pair;
         using result_type       = typename Pair::first;
 
         // const typename Pair::first& operator()(Pair& x) const { return x.first; }
-        result_type& operator()(arguement_type& x) const { return x.first; }
+        result_type& operator()(argument_type& x) const { return x.first; }
     };
 
     template<class Key, class T, class Compare=std::less<Key>, class Alloc=alloc>
@@ -44,7 +44,7 @@ namespace DemoSTL
 
         class value_compare
         {
-            friend class map<Key, T, Compare, Alloc>;
+            friend class map;
         protected:
             Compare comp;
             explicit value_compare(Compare c): comp(c) {}
@@ -53,7 +53,6 @@ namespace DemoSTL
             { return key_compare(x.first, y.first); }
         };
 
-    private:
         using rep_type  = rb_tree<Key, T, select1st<value_type>, key_compare, Alloc>;
         rep_type t;
 
@@ -78,7 +77,6 @@ namespace DemoSTL
         map(InputIterator first, InputIterator last, const Compare& comp): t(comp)
         { t.insert_unique(first, last); }
 
-    public:
         key_compare key_comp() const { return t.key_comp(); }
         value_compare value_comp() const { return value_compare(t.key_comp()); }
         iterator begin() { return t.begin(); }
@@ -98,7 +96,7 @@ namespace DemoSTL
 
         T& operator[](const key_type &k)
         {
-            return (*((insert(value_type(k, T()))).first)).second;
+            return (*insert(value_type(k, T())).first).second;
         }
 
         void clear() { t.clear(); }

@@ -6,8 +6,6 @@
 #define MYCPPSTL_MEMORY_HPP
 
 #include "memory/alloc.hpp"
-#include "memory/uninitialized.hpp"
-#include "stl_iterator.hpp"
 
 
 #ifdef __USE_MALLOC__
@@ -36,12 +34,12 @@ namespace DemoSTL
     public:
         static T *allocate(size_t n)
         {
-            return 0==n ? nullptr : (T*) alloc::allocate(n*sizeof(T));
+            return 0==n ? nullptr : static_cast<T *>(alloc::allocate(n * sizeof(T)));
         }
 
         static T *allocate()
         {
-            return (T*) alloc::allocate(sizeof(T));
+            return static_cast<T *>(alloc::allocate(sizeof(T)));
         }
 
         static void deallocate(T *p, size_t n)

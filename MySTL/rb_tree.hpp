@@ -6,13 +6,14 @@
 #define MYCPPSTL_RB_TREE_HPP
 
 #include "memory.hpp"
+#include "stl_iterator.hpp"
 
 namespace DemoSTL
 {
     typedef bool rb_tree_type;
     // 如果是我，我可能会用enum表示red和black？
-    const rb_tree_type red = false;
-    const rb_tree_type black = true;
+    constexpr rb_tree_type red = false;
+    constexpr rb_tree_type black = true;
 
     struct rb_tree_node_base
     {
@@ -42,7 +43,7 @@ namespace DemoSTL
     template<class Value>
     struct rb_tree_node: rb_tree_node_base
     {
-        typedef rb_tree_node<Value>* link_type;
+        typedef rb_tree_node* link_type;
         Value value;
     };
 
@@ -120,7 +121,7 @@ namespace DemoSTL
         using pointer           = Ptr;
         using iterator          = rb_tree_iterator<Value, Value&, Value*>;
         using const_iterator    = rb_tree_iterator<Value, const Value&, const Value*>;
-        using self              = rb_tree_iterator<Value, Ref, Ptr>;
+        using self              = rb_tree_iterator;
         using link_type         = rb_tree_node<Value>*;
 
         rb_tree_iterator() = default;
@@ -129,7 +130,7 @@ namespace DemoSTL
 
         reference operator*() {return link_type(p_node)->value;}
         #ifndef NO_ARROW_OPERATOR
-        pointer operator->() {return &(operator*());}
+        pointer operator->() {return &operator*();}
         #endif
         self& operator++() {increment(); return *this;}
         self operator++(int)
@@ -154,7 +155,7 @@ namespace DemoSTL
         using void_ptr                  = void*;
         using base_ptr                  = rb_tree_node_base*;
         using rb_tree_node              = rb_tree_node<Value>;
-        using rb_tree_node_allocator    = simple_alloc<rb_tree_node, alloc>;
+        using rb_tree_node_allocator    = simple_alloc<rb_tree_node, Alloc>;
         using color_type                = typename rb_tree_node::color_type;
     public:
         using key_type                  = Key;
@@ -200,7 +201,6 @@ namespace DemoSTL
             put_node(p);
         }
 
-    protected:
         size_type node_count;   // 用于记录节点个数
         link_type header;
         Compare key_compare;    // functional obj，用于比较node值
@@ -220,9 +220,9 @@ namespace DemoSTL
         static link_type& left(base_ptr x) { return x->left; }
         static link_type& right(base_ptr x) { return x->right; }
         static link_type& parent(base_ptr x) { return x->parent; }
-        static reference value(base_ptr x) { return ((link_type)x)->value; }
+        static reference value(base_ptr x) { return static_cast<link_type>(x)->value; }
         static const Key& key(base_ptr x) { return KeyOfValue()(value(link_type(x))); }
-        static color_type& color(base_ptr x) { return ((link_type)x)->color; }
+        static color_type& color(base_ptr x) { return static_cast<link_type>(x)->color; }
 
         static link_type min(link_type x) { return rb_tree_node_base::min(x); }
         static link_type max(link_type x) { return rb_tree_node_base::max(x); }
@@ -232,7 +232,7 @@ namespace DemoSTL
         using const_iterator    = const rb_tree_iterator<value_type, reference, pointer>;
 
     protected:
-        inline void rb_tree_rotate_left(rb_tree_node_base* x, rb_tree_node_base*& root)
+        static void rb_tree_rotate_left(rb_tree_node_base* x, rb_tree_node_base*& root)
         {
             rb_tree_node_base* y = x->right;
             x->right = y->left;
@@ -245,7 +245,8 @@ namespace DemoSTL
             y->left = x;
             x->parent = y;
         }
-        inline void rb_tree_rotate_right(rb_tree_node_base* x, rb_tree_node_base*& root)
+
+        static void rb_tree_rotate_right(rb_tree_node_base* x, rb_tree_node_base*& root)
         {
             rb_tree_node_base* y = x->left;
             x->left = y->right;
@@ -258,15 +259,15 @@ namespace DemoSTL
             y->right = x;
             x->parent = y;
         }
-        inline void rb_tree_re_balance(rb_tree_node_base* x, rb_tree_node_base*& root)
+
+        static void rb_tree_re_balance(rb_tree_node_base* x, rb_tree_node_base*& root)
         {
             x->color = red;
             while(x != root && x->parent->color == red)
             {
                 if(x->parent == x->parent->parent->left)
                 {
-                    rb_tree_node_base* y = x->parent->parent->right;
-                    if(y && y->color == red)
+                    if(rb_tree_node_base* y = x->parent->parent->right; y && y->color == red)
                     {
                         x->parent->color = black;
                         y->color = black;
@@ -287,8 +288,7 @@ namespace DemoSTL
                 }
                 else
                 {
-                    rb_tree_node_base* y = x->parent->parent->left;
-                    if(y && y->color == red)
+                    if(rb_tree_node_base* y = x->parent->parent->left; y && y->color == red)
                     {
                         x->parent->color = black;
                         y->color = black;
@@ -378,15 +378,13 @@ namespace DemoSTL
         explicit rb_tree(const Compare& comp = Compare()): node_count(0), key_compare(comp) { init(); }
         ~rb_tree() { clear(); put_node(header); }
 
-    public:
         Compare key_comp() const { return key_compare; }
         iterator begin() { return left_most(); }
         iterator end() { return header; }
-        bool empty() { return node_count == 0; }
-        size_type size() { return node_count; }
-        [[nodiscard]] size_type max_size() const { return size_type(-1); }
+        [[nodiscard]] bool empty() const { return node_count == 0; }
+        [[nodiscard]] size_type size() const { return node_count; }
+        [[nodiscard]] static size_type max_size() { return static_cast<size_type>(-1); }
 
-    public:
         std::pair<iterator, bool> insert_unique(const_reference v)
         {
             link_type y = header;
@@ -404,8 +402,7 @@ namespace DemoSTL
             {
                 if(j == begin())
                     return std::pair<iterator, bool>(insert_(x, y, v), true);
-                else
-                    j--;
+                --j;
             }
             if(key_compare(key(j.p_node), KeyOfValue()(v)))
                 return std::pair<iterator, bool>(insert_(x, y, v), true);
@@ -415,7 +412,7 @@ namespace DemoSTL
         iterator insert_unique(iterator first, iterator last)
         {
             iterator i = first;
-            for(i = first; i != last; i++)
+            for(i = first; i != last; ++i)
                 insert_unique(*i);
             return i;
         }
@@ -447,7 +444,7 @@ namespace DemoSTL
             }
 
             iterator j = iterator(y);
-            return (j == end() || key_compare(k, key(j.p_node))) ? end() : j;
+            return j == end() || key_compare(k, key(j.p_node)) ? end() : j;
         }
     };
 } // DemoSTL

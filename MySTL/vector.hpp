@@ -38,9 +38,9 @@ namespace DemoSTL
             if(finish != end_of_storage)
             {
                 construct(position, *(position-1));
-                finish++;
+                ++finish;
                 std::copy_backward(position, finish-2, finish-1);
-                *(position) = x;
+                *position = x;
             }
             else
             {
@@ -52,7 +52,7 @@ namespace DemoSTL
                 try{
                     new_finish = uninitialized_copy(start, position, new_start);
                     construct(new_finish, x);
-                    new_finish++;
+                    ++new_finish;
                     new_finish = uninitialized_copy(position, finish, new_finish);
                 }
                 catch(...){
@@ -89,8 +89,8 @@ namespace DemoSTL
     public:
         iterator begin() { return start; }
         iterator end() { return finish; }
-        [[nodiscard]] size_type size() const { return size_type(finish-start); }
-        [[nodiscard]] size_type capacity() const { return size_type(end_of_storage-start); }
+        [[nodiscard]] size_type size() const { return static_cast<size_type>(finish - start); }
+        [[nodiscard]] size_type capacity() const { return static_cast<size_type>(end_of_storage - start); }
         bool empty(){ return start == finish; }
 
         /* 没有重载=运算符 */
@@ -108,7 +108,7 @@ namespace DemoSTL
             start = data_alloc::allocate(len);
             finish = start;
             end_of_storage = start + len;
-            for(iterator i = other.start; i != other.finish; i++)
+            for(iterator i = other.start; i != other.finish; ++i)
             {
                 T n = *i;
                 this->push_back(n);
@@ -129,7 +129,7 @@ namespace DemoSTL
             if(end_of_storage != finish)
             {
                 construct(finish, x);
-                finish++;
+                ++finish;
             }
             else
             {
@@ -138,14 +138,14 @@ namespace DemoSTL
         }
         void pop_back()
         {
-            finish--;
+            --finish;
             destroy(finish);
         }
         iterator erase(iterator position)
         {
             if(position + 1 != finish)
                 std::copy(position+1, finish, position);
-            finish--;
+            --finish;
             destroy(finish);
             return position;
         }

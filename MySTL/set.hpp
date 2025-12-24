@@ -53,11 +53,7 @@ namespace DemoSTL
 
         set(const set<Key, Compare, Alloc>& x): t(x.t) {}
 
-        set<Key, Compare, Alloc>& operator=(const set<Key, Compare, Alloc>& x)
-        {
-            t = x.t;
-            return *this;
-        }
+        set<Key, Compare, Alloc>& operator=(const set<Key, Compare, Alloc>& x) = default;
 
     public:
         key_compare key_comp() const { return t.key_comp(); }

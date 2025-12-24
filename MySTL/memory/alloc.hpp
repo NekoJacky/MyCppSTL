@@ -17,7 +17,6 @@ namespace DemoSTL
     template<int inst>
     class malloc_alloc_template
     {
-    private:
         // 以下都是函数指针
         // oom: out of memory
         static void *oom_malloc(size_t n);
@@ -115,9 +114,9 @@ namespace DemoSTL
         // 直接位运算，很巧妙，将不足8的倍数的bytes上调至8的倍数
         static size_t round_up(size_t bytes)
         {
-            return (((bytes)+ALIGN-1)&~(ALIGN-1));
+            return bytes+ALIGN-1&~(ALIGN-1);
         }
-    private:
+
         // volatile修饰的内容随时可能发生变化，每次都必须从内存中再次读取。
         // volatile关键字表示编译器不要对它做过多的优化
         static obj* volatile free_list[FREELISTS];
@@ -167,58 +166,55 @@ namespace DemoSTL
             start_free += need;
             return result;
         }
-        else if(left >= size)
+        if(left >= size)
         {
-            objs = (int)(left / size);
+            objs = static_cast<int>(left / size);
             need = size * objs;
             result = start_free;
             start_free += need;
             return result;
         }
-        else
+        size_t get = 2*need + round_up(heap_size>>4);
+
+        // 利用内存池中剩余的内存
+        if(left > 0)
         {
-            size_t get = 2*need + round_up(heap_size>>4);
-
-            // 利用内存池中剩余的内存
-            if(left > 0)
-            {
-                obj* volatile *p_free_list = free_list+free_list_index(left);
-                ((obj*)start_free)->free_list_link = *p_free_list;
-                *p_free_list = (obj*)start_free;
-            }
-
-            // 补充内存池
-            start_free = (char*)malloc(get);
-
-            // 仍然无法获得内存
-            if(start_free == nullptr)
-            {
-                int i;
-                obj * volatile *p_free_list, *p;
-                // 尝试从free list中的其它节点获得内存
-                for(i = (int)size; i < MAX_BYTES; i += ALIGN)
-                {
-                    p_free_list = free_list + free_list_index(i);
-                    p = *p_free_list;
-                    if(p != nullptr)
-                    {
-                        *p_free_list = p->free_list_link;
-                        start_free = (char*)p;
-                        end_free = start_free + i;
-                        return chunk_alloc(size, objs);
-                    }
-                }
-
-                // 完全无法获得内存，尝试第一级配置器下的out of memory机制
-                // 有可能会导致抛出异常
-                end_free = nullptr;
-                start_free = (char *)malloc_alloc::allocate(get);
-            }
-
-            heap_size += get;
-            end_free = start_free + get;
-            return chunk_alloc(size, objs);
+            obj* volatile *p_free_list = free_list+free_list_index(left);
+            static_cast<obj *>(start_free)->free_list_link = *p_free_list;
+            *p_free_list = static_cast<obj *>(start_free);
         }
+
+        // 补充内存池
+        start_free = static_cast<char *>(malloc(get));
+
+        // 仍然无法获得内存
+        if(start_free == nullptr)
+        {
+            int i;
+            obj * volatile *p_free_list, *p;
+            // 尝试从free list中的其它节点获得内存
+            for(i = (int)size; i < MAX_BYTES; i += ALIGN)
+            {
+                p_free_list = free_list + free_list_index(i);
+                p = *p_free_list;
+                if(p != nullptr)
+                {
+                    *p_free_list = p->free_list_link;
+                    start_free = static_cast<char *>(p);
+                    end_free = start_free + i;
+                    return chunk_alloc(size, objs);
+                }
+            }
+
+            // 完全无法获得内存，尝试第一级配置器下的out of memory机制
+            // 有可能会导致抛出异常
+            end_free = nullptr;
+            start_free = static_cast<char *>(malloc_alloc::allocate(get));
+        }
+
+        heap_size += get;
+        end_free = start_free + get;
+        return chunk_alloc(size, objs);
     }
 
     template<bool threads, int inst>

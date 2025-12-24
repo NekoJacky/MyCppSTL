@@ -6,6 +6,7 @@
 #define MYCPPSTL_LIST_HPP
 
 #include "memory.hpp"
+#include "stl_iterator.hpp"
 
 /* 环状双向链表 */
 
@@ -50,7 +51,7 @@ namespace DemoSTL
         pointer operator->() { return &(operator*()); }
         self& operator++()
         {
-            p_node = (link_type)p_node->p_next;
+            p_node = static_cast<link_type>(p_node->p_next);
             return *this;
         }
         self operator++(int)
@@ -61,7 +62,7 @@ namespace DemoSTL
         }
         self& operator--()
         {
-            p_node = (link_type)p_node->p_prev;
+            p_node = static_cast<link_type>(p_node->p_prev);
             return *this;
         }
         self operator--(int)
@@ -163,7 +164,8 @@ namespace DemoSTL
         void clear();                           // 清除整个表
         void remove(const T& value);            // 移除所有值为value的元素
         void unique();
-        iterator find(iterator first, iterator last, const T& value)
+
+        static iterator find(iterator first, iterator last, const T& value)
         {
             while(first != last)
             {
@@ -194,7 +196,7 @@ namespace DemoSTL
             if(first != last)
                 transfer(position, first, last);
         }
-        void swap(list& x);
+        void swap(list& x) noexcept;
         void merge(list& x);
         void reverse();
         void sort();
@@ -224,7 +226,7 @@ namespace DemoSTL
             iterator next = first;
             next++;
             if(first.p_node->data == value) erase(first);
-            first++;
+            ++first;
         }
     }
 
@@ -235,23 +237,22 @@ namespace DemoSTL
         iterator last = end();
         if(first == last) return ;
         iterator next = first;
-        next++;
+        ++next;
         while(next != last)
         {
             while(next != last && *next == *first)
             {
                 iterator tmp = next;
-                next++;
+                ++next;
                 erase(tmp);
             }
             first = next;
-            next++;
+            ++next;
         }
     }
 
     template<class T, class alloc>
-    void list<T, alloc>::swap(list<T, alloc> &x)
-    {
+    void list<T, alloc>::swap(list<T, alloc> &x) noexcept {
         list<T> tmp;
         iterator first = p_node;
         iterator first_x = x.p_node;

@@ -35,7 +35,7 @@ namespace DemoSTL
         const_reference top() const { return s.back(); }
         void push(const T& x) { s.push_back(x); }
         void pop() { s.pop_back(); }
-        void swap(stack<T, Sequence> &x) { s.swap(x.s); }
+        void swap(stack<T, Sequence> &x) noexcept { s.swap(x.s); }
     };
 } // DemoSTL
 
